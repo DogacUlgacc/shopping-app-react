@@ -6,16 +6,21 @@ const Product = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [productInfo, setProductInfo] = useState({
+    name: "",
+    price: "",
+    quantity: "",
+  });
+  const [updateProductInfo, setUpdateProductInfo] = useState({
+    name: "",
+    price: "",
+    quantity: "",
+  });
   const [enteredProductId, setEnteredProductId] = useState("");
-  const [newProductName, setNewProductName] = useState("");
-  const [newProductPrice, setNewProductPrice] = useState("");
-  const [newProductQuantity, setNewProductQuantity] = useState("");
-  const [updateProductName, setUpdateProductName] = useState("");
-  const [updateProductQuantity, setUpdateProductQuantity] = useState("");
-  const [updateProductPrice, setUpdateProductPrice] = useState("");
   const [productIdForUpdate, setProductIdForUpdate] = useState("");
   const [isSearched, setIsSearched] = useState(false);
   const [deleteWithId, setDeleteWithId] = useState("");
+
   // 1. Get All Products
   const fetchAllProducts = async () => {
     setLoading(true);
@@ -51,19 +56,13 @@ const Product = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          name: newProductName,
-          price: parseFloat(newProductPrice),
-          quantity: parseInt(newProductQuantity),
-        }),
+        body: JSON.stringify(productInfo),
       });
 
       if (response.ok) {
         console.log("Product added.");
         fetchAllProducts();
-        setNewProductName("");
-        setNewProductPrice("");
-        setNewProductQuantity("");
+        setProductInfo({ name: "", price: "", quantity: "" });
       } else {
         throw new Error("Ürün eklenirken hata oluştu");
       }
@@ -76,19 +75,18 @@ const Product = () => {
   // 4. Update an Existing Product (PUT)
   const handleUpdate = async () => {
     if (
-      !productIdForUpdate ||
-      !updateProductName ||
-      !updateProductQuantity ||
-      !updateProductPrice
+      !updateProductInfo.name ||
+      !updateProductInfo.price ||
+      !updateProductInfo.quantity
     ) {
-      console.log("Lütfen tüm alanları doldurun!");
+      alert("Lütfen tüm alanları doldurun!");
       return;
     }
 
     const updatedProduct = {
-      name: updateProductName,
-      quantity: parseInt(updateProductQuantity),
-      price: parseFloat(updateProductPrice),
+      name: updateProductInfo.name,
+      quantity: parseInt(updateProductInfo.quantity),
+      price: parseFloat(updateProductInfo.price),
     };
     console.log("Gönderilen Güncel Ürün:", updatedProduct);
     try {
@@ -100,9 +98,7 @@ const Product = () => {
       if (response.status === 200) {
         console.log("Ürün başarıyla güncellendi!");
         setProductIdForUpdate("");
-        setUpdateProductName("");
-        setUpdateProductQuantity("");
-        setUpdateProductPrice("");
+        setUpdateProductInfo({ name: "", quantity: "", price: "" });
         fetchAllProducts();
       } else {
         console.log("Ürün güncellenirken bir hata oluştu.");
@@ -190,20 +186,35 @@ const Product = () => {
       <div>
         <input
           type="text"
-          value={newProductName}
-          onChange={(e) => setNewProductName(e.target.value)}
+          value={productInfo.name}
+          onChange={(e) =>
+            setProductInfo((prevInfo) => ({
+              ...prevInfo,
+              name: e.target.value,
+            }))
+          }
           placeholder="Enter new product name"
         />
         <input
           type="number"
-          value={newProductPrice}
-          onChange={(e) => setNewProductPrice(e.target.value)}
+          value={productInfo.price}
+          onChange={(e) =>
+            setProductInfo((prevInfo) => ({
+              ...prevInfo,
+              price: e.target.value,
+            }))
+          }
           placeholder="Enter product price"
         />
         <input
           type="number"
-          value={newProductQuantity}
-          onChange={(e) => setNewProductQuantity(e.target.value)}
+          value={productInfo.quantity}
+          onChange={(e) =>
+            setProductInfo((prevInfo) => ({
+              ...prevInfo,
+              quantity: e.target.value,
+            }))
+          }
           placeholder="Enter product quantity"
         />
         <button onClick={addProduct}>Add New Product</button>
@@ -219,20 +230,35 @@ const Product = () => {
         />
         <input
           type="text"
-          value={updateProductName}
-          onChange={(e) => setUpdateProductName(e.target.value)}
+          value={updateProductInfo.name}
+          onChange={(e) =>
+            setUpdateProductInfo((prevInfo) => ({
+              ...prevInfo,
+              name: e.target.value,
+            }))
+          }
           placeholder="Enter new product name"
         />
         <input
           type="number"
-          value={updateProductPrice}
-          onChange={(e) => setUpdateProductPrice(e.target.value)}
+          value={updateProductInfo.price}
+          onChange={(e) =>
+            setUpdateProductInfo((prevInfo) => ({
+              ...prevInfo,
+              price: e.target.value,
+            }))
+          }
           placeholder="Enter product price"
         />
         <input
           type="number"
-          value={updateProductQuantity}
-          onChange={(e) => setUpdateProductQuantity(e.target.value)}
+          value={updateProductInfo.quantity}
+          onChange={(e) =>
+            setUpdateProductInfo((prevInfo) => ({
+              ...prevInfo,
+              quantity: e.target.value,
+            }))
+          }
           placeholder="Enter product quantity"
         />
         <button onClick={handleUpdate}>Update Product</button>

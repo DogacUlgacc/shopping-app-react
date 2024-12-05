@@ -6,8 +6,7 @@ import Order from "./Components/Order";
 function App() {
   return (
     <div className="App">
-      <h1>React app</h1>
-      <Product />
+      <Customer />
     </div>
   );
 }
