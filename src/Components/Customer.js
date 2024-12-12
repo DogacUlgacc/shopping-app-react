@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import "../style/Customer.css";
 
 const Customer = () => {
   const [customers, setCustomers] = useState([]);
@@ -20,11 +21,14 @@ const Customer = () => {
   const [isSearched, setIsSearched] = useState(false);
   const [enteredProductId, setEnteredProductId] = useState("");
   const [deleteWithId, setDeleteWithId] = useState("");
+
+  const BASE_URL = "http://localhost:8080/customer";
+
   // 1. Get All Products
   const fetchAllCustomer = async () => {
     setLoading(true);
     try {
-      const response = await axios.get("http://localhost:8080/customer/all"); // Fazladan '}' kaldırıldı
+      const response = await axios.get(`${BASE_URL}/all`);
       setCustomers(response.data); // Müşteri listesini güncelle
     } catch (error) {
       console.error("Hata:", error);
@@ -38,17 +42,15 @@ const Customer = () => {
   const fetchCustomerById = async (customerId) => {
     setIsSearched(true);
     try {
-      const response = await axios.get(
-        `http://localhost:8080/customer/${customerId}`
-      );
+      const response = await axios.get(`${BASE_URL}/${customerId}`);
       setCustomer(response.data);
     } catch (error) {
       console.log(error);
       setCustomer(null);
     }
   };
-  // 3. Add a New Customer (POST)
 
+  // 3. Add a New Customer (POST)
   const addCustomer = async () => {
     if (!customerInfo.name) {
       alert("Name field cannot be empty!");
@@ -64,7 +66,7 @@ const Customer = () => {
       return;
     }
     try {
-      const response = await fetch("http://localhost:8080/customer/add", {
+      const response = await fetch(`${BASE_URL}/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -89,7 +91,6 @@ const Customer = () => {
   };
 
   /* Update Customer */
-
   const handleUpdate = async () => {
     if (!updateCustomerInfo.email) {
       alert("Lütfen tüm alanları doldurun!");
@@ -104,7 +105,7 @@ const Customer = () => {
 
     try {
       const response = await axios.put(
-        `http://localhost:8080/customer/update/${customerIdForUpdate}`,
+        `${BASE_URL}/update/${customerIdForUpdate}`,
         updateCustomer
       );
       if (response.status === 200) {
@@ -122,7 +123,6 @@ const Customer = () => {
   };
 
   /* Delete Customer  */
-
   const deleteCustomer = async (customerId) => {
     const id = parseInt(customerId);
     if (isNaN(id)) {
@@ -130,9 +130,7 @@ const Customer = () => {
     }
     setLoading(true);
     try {
-      const response = await axios.delete(
-        `http://localhost:8080/customer/delete/${id}`
-      );
+      const response = await axios.delete(`${BASE_URL}/delete/${id}`);
       console.log(`Customer başarıyla silindi: ${response.data}`);
       fetchAllCustomer();
     } catch (err) {
@@ -149,7 +147,7 @@ const Customer = () => {
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/customer/all");
+        const response = await axios.get(`${BASE_URL}/all`);
         setCustomers(response.data);
       } catch (err) {
         setError(err);
@@ -169,113 +167,136 @@ const Customer = () => {
   }
 
   return (
-    <div>
-      <div>
-        <h2>Customers</h2>
-        <ul>
+    <div className="customer-container">
+      <div className="customers">
+        <h2 className="customers-title">Customers</h2>
+        <ul className="customer-list">
           {customers.map((customer) => (
-            <li>
-              <li> Customer name : {customer.name}</li>
-              <li> Customer : surname {customer.surname}</li>
-              <li> Customer email: {customer.email}</li>
+            <li key={customer.id} className="customer-item">
+              <p className="customer-detail">Customer name: {customer.name}</p>
+              <p className="customer-detail">
+                Customer surname: {customer.surname}
+              </p>
+              <p className="customer-detail">
+                Customer email: {customer.email}
+              </p>
               <br />
             </li>
           ))}
         </ul>
       </div>
-      <br></br>
-      <div>
-        <h2>Customer Arama</h2>
+
+      <div className="search-customer">
+        <h2 className="search-title">Customer Arama</h2>
         <input
           type="number"
+          className="search-input"
           value={enteredProductId}
           onChange={(e) => setEnteredProductId(e.target.value)}
           placeholder="Customer ID girin"
         />
-        <button onClick={() => fetchCustomerById(enteredProductId)}>Ara</button>
+        <button
+          className="search-button"
+          onClick={() => fetchCustomerById(enteredProductId)}
+        >
+          Ara
+        </button>
 
-        {/* Arama yapılmışsa ve sonuç gösterilmeye hazırsa */}
         {isSearched &&
           (customer ? (
-            <div>
-              <h3>Customer Detayları</h3>
-              <p>Adı: {customer.name}</p>
-              <p>Fiyat: {customer.surname}</p>
-              <p>Miktar: {customer.email}</p>
+            <div className="customer-details">
+              <h3 className="details-title">Customer Detayları</h3>
+              <p className="detail-text">Adı: {customer.name}</p>
+              <p className="detail-text">Soyadı: {customer.surname}</p>
+              <p className="detail-text">E-posta: {customer.email}</p>
             </div>
           ) : (
-            <p>Customer bulunamadı</p>
+            <p className="no-customer">Customer bulunamadı</p>
           ))}
       </div>
-      <div>
-        {/* Add New Customer */}
-        <div>
-          <input
-            type="text"
-            value={customerInfo.name}
-            onChange={(e) =>
-              setCustomerInfo((prevInfo) => ({
-                ...prevInfo, // Mevcut state'in diğer alanlarını korur
-                name: e.target.value, // Sadece name alanını günceller
-              }))
-            }
-            placeholder="Enter new customer name"
-          />
-          <input
-            type="text"
-            value={customerInfo.surname}
-            onChange={(e) =>
-              setCustomerInfo((prevInfo) => ({
-                ...prevInfo, // Mevcut state'in diğer alanlarını korur
-                surname: e.target.value, // Sadece name alanını günceller
-              }))
-            }
-            placeholder="Enter customer surname"
-          />
-          <input
-            type="email"
-            value={customerInfo.email}
-            onChange={(e) =>
-              setCustomerInfo((prevInfo) => ({
-                ...prevInfo, // Mevcut state'in diğer alanlarını korur
-                email: e.target.value, // Sadece name alanını günceller
-              }))
-            }
-            placeholder="Enter customer email"
-          />
-          <button onClick={addCustomer}>Add New Customer</button>
-        </div>
-        {/* Update Customer */}
-        <div>
-          <input
-            type="number"
-            value={customerIdForUpdate}
-            onChange={(e) => setCustomerIdForUpdate(e.target.value)}
-            placeholder="Enter Customer Id"
-          />
-          <input
-            type="text"
-            value={updateCustomerInfo.email}
-            onChange={(e) =>
-              setUpdateCustomerInfo((prevInfo) => ({
-                ...prevInfo,
-                email: e.target.value,
-              }))
-            }
-            placeholder="Enter Customer new mail"
-          />
-          <button onClick={handleUpdate}>Update Customer</button>
-        </div>
+
+      <div className="add-customer">
+        <h3 className="form-title">Add New Customer</h3>
+        <input
+          type="text"
+          className="input-field"
+          value={customerInfo.name}
+          onChange={(e) =>
+            setCustomerInfo((prevInfo) => ({
+              ...prevInfo,
+              name: e.target.value,
+            }))
+          }
+          placeholder="Enter new customer name"
+        />
+        <input
+          type="text"
+          className="input-field"
+          value={customerInfo.surname}
+          onChange={(e) =>
+            setCustomerInfo((prevInfo) => ({
+              ...prevInfo,
+              surname: e.target.value,
+            }))
+          }
+          placeholder="Enter customer surname"
+        />
+        <input
+          type="email"
+          className="input-field"
+          value={customerInfo.email}
+          onChange={(e) =>
+            setCustomerInfo((prevInfo) => ({
+              ...prevInfo,
+              email: e.target.value,
+            }))
+          }
+          placeholder="Enter customer email"
+        />
+        <button className="add-button" onClick={addCustomer}>
+          Add New Customer
+        </button>
       </div>
-      {/* Delete Customer */}
-      <div>
+
+      <div className="update-customer">
+        <h3 className="form-title">Update Customer</h3>
         <input
           type="number"
+          className="input-field"
+          value={customerIdForUpdate}
+          onChange={(e) => setCustomerIdForUpdate(e.target.value)}
+          placeholder="Enter Customer Id"
+        />
+        <input
+          type="text"
+          className="input-field"
+          value={updateCustomerInfo.email}
+          onChange={(e) =>
+            setUpdateCustomerInfo((prevInfo) => ({
+              ...prevInfo,
+              email: e.target.value,
+            }))
+          }
+          placeholder="Enter Customer new email"
+        />
+        <button className="update-button" onClick={handleUpdate}>
+          Update Customer
+        </button>
+      </div>
+
+      <div className="delete-customer">
+        <h3 className="form-title">Delete Customer</h3>
+        <input
+          type="number"
+          className="input-field"
           value={deleteWithId}
           onChange={(e) => setDeleteWithId(e.target.value)}
           placeholder="Customer ID girin"
         />
-        <button onClick={() => deleteCustomer(deleteWithId)}>
+        <button
+          className="delete-button"
+          onClick={() => deleteCustomer(deleteWithId)}
+        >
           Delete Customer
         </button>
       </div>

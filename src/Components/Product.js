@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-
+import "../style/Product.css";
 const Product = () => {
   const [products, setProducts] = useState([]);
   const [product, setProduct] = useState(null);
@@ -20,12 +20,12 @@ const Product = () => {
   const [productIdForUpdate, setProductIdForUpdate] = useState("");
   const [isSearched, setIsSearched] = useState(false);
   const [deleteWithId, setDeleteWithId] = useState("");
-
+  const BASE_URL = "http://localhost:8080/product";
   // 1. Get All Products
   const fetchAllProducts = async () => {
     setLoading(true);
     try {
-      const response = await axios.get("http://localhost:8080/product/all");
+      const response = await axios.get(`${BASE_URL}/all`);
       setProducts(response.data);
     } catch (err) {
       setError(err);
@@ -38,9 +38,7 @@ const Product = () => {
   const fetchProductById = async (productId) => {
     setIsSearched(true); // Arama yapıldı
     try {
-      const response = await axios.get(
-        `http://localhost:8080/product/${productId}`
-      );
+      const response = await axios.get(`${BASE_URL}/${productId}`);
       setProduct(response.data); // Ürün bulunduysa state güncellenir
     } catch (error) {
       console.error("Hata:", error);
@@ -51,7 +49,7 @@ const Product = () => {
   // 3. Add a New Product (POST)
   const addProduct = async () => {
     try {
-      const response = await fetch("http://localhost:8080/product/add", {
+      const response = await fetch(`${BASE_URL}/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -91,7 +89,7 @@ const Product = () => {
     console.log("Gönderilen Güncel Ürün:", updatedProduct);
     try {
       const response = await axios.put(
-        `http://localhost:8080/product/update/${productIdForUpdate}`,
+        `${BASE_URL}/update/${productIdForUpdate}`,
         updatedProduct
       );
 
@@ -118,9 +116,7 @@ const Product = () => {
 
     setLoading(true);
     try {
-      const response = await axios.delete(
-        `http://localhost:8080/product/delete/${id}`
-      );
+      const response = await axios.delete(`$  {BASE_URL}/delete/${id}`);
       console.log(`Ürün başarıyla silindi: ${response.data}`);
       fetchAllProducts();
     } catch (err) {
@@ -143,140 +139,184 @@ const Product = () => {
   if (error) return <div>Error: {error.message}</div>;
 
   return (
-    <div>
-      <div>
-        <h2>Product Manager</h2>
+    <>
+      <div className="container my-5">
+        {/* Product Manager Section */}
+        <div className="product-manager mb-4">
+          <h2 className="text-center">Product Manager</h2>
 
-        {/* Display all products */}
-        <h3>All Products</h3>
-        <ul>
-          {products.map((product) => (
-            <li key={product.id}>
-              {product.name} - ${product.price} (Qty: {product.quantity})
-            </li>
-          ))}
-        </ul>
-      </div>
-      {/* Get Product by ID */}
-      <div>
-        <h2>Ürün Arama</h2>
-        <input
-          type="number"
-          value={enteredProductId}
-          onChange={(e) => setEnteredProductId(e.target.value)}
-          placeholder="Ürün ID girin"
-        />
-        <button onClick={() => fetchProductById(enteredProductId)}>Ara</button>
+          {/* Display all products */}
+          <h3 className="mt-4">All Products</h3>
+          <ul className="list-group">
+            {products.map((product) => (
+              <li key={product.id} className="list-group-item">
+                {product.name} - ${product.price} (Qty: {product.quantity})
+              </li>
+            ))}
+          </ul>
+        </div>
 
-        {/* Arama yapılmışsa ve sonuç gösterilmeye hazırsa */}
-        {isSearched &&
-          (product ? (
-            <div>
+        {/* Product Search Section */}
+        <div className="product-search mb-4">
+          <h2 className="text-center">Ürün Arama</h2>
+          <div className="input-group mb-3">
+            <input
+              type="number"
+              className="form-control"
+              value={enteredProductId}
+              onChange={(e) => setEnteredProductId(e.target.value)}
+              placeholder="Ürün ID girin"
+            />
+            <button
+              className="btn btn-primary"
+              onClick={() => fetchProductById(enteredProductId)}
+            >
+              Ara
+            </button>
+          </div>
+
+          {isSearched && product ? (
+            <div className="alert alert-info">
               <h3>Ürün Detayları</h3>
               <p>Adı: {product.name}</p>
-              <p>Fiyat: {product.price}</p>
+              <p>Fiyat: ${product.price}</p>
               <p>Miktar: {product.quantity}</p>
             </div>
-          ) : (
-            <p>Ürün bulunamadı</p>
-          ))}
-      </div>
+          ) : isSearched && !product ? (
+            <div className="alert alert-danger">Ürün bulunamadı</div>
+          ) : null}
+        </div>
 
-      {/* Add New Product */}
-      <div>
-        <input
-          type="text"
-          value={productInfo.name}
-          onChange={(e) =>
-            setProductInfo((prevInfo) => ({
-              ...prevInfo,
-              name: e.target.value,
-            }))
-          }
-          placeholder="Enter new product name"
-        />
-        <input
-          type="number"
-          value={productInfo.price}
-          onChange={(e) =>
-            setProductInfo((prevInfo) => ({
-              ...prevInfo,
-              price: e.target.value,
-            }))
-          }
-          placeholder="Enter product price"
-        />
-        <input
-          type="number"
-          value={productInfo.quantity}
-          onChange={(e) =>
-            setProductInfo((prevInfo) => ({
-              ...prevInfo,
-              quantity: e.target.value,
-            }))
-          }
-          placeholder="Enter product quantity"
-        />
-        <button onClick={addProduct}>Add New Product</button>
-      </div>
+        {/* Add New Product Section */}
+        <div className="add-product mb-4">
+          <h3 className="text-center">Add New Product</h3>
+          <div className="form-group mb-3">
+            <input
+              type="text"
+              className="form-control"
+              value={productInfo.name}
+              onChange={(e) =>
+                setProductInfo((prevInfo) => ({
+                  ...prevInfo,
+                  name: e.target.value,
+                }))
+              }
+              placeholder="Enter new product name"
+            />
+          </div>
+          <div className="form-group mb-3">
+            <input
+              type="number"
+              className="form-control"
+              value={productInfo.price}
+              onChange={(e) =>
+                setProductInfo((prevInfo) => ({
+                  ...prevInfo,
+                  price: e.target.value,
+                }))
+              }
+              placeholder="Enter product price"
+            />
+          </div>
+          <div className="form-group mb-3">
+            <input
+              type="number"
+              className="form-control"
+              value={productInfo.quantity}
+              onChange={(e) =>
+                setProductInfo((prevInfo) => ({
+                  ...prevInfo,
+                  quantity: e.target.value,
+                }))
+              }
+              placeholder="Enter product quantity"
+            />
+          </div>
+          <button className="btn btn-success" onClick={addProduct}>
+            Add New Product
+          </button>
+        </div>
 
-      {/* Update Product */}
-      <div>
-        <input
-          type="number"
-          value={productIdForUpdate}
-          onChange={(e) => setProductIdForUpdate(e.target.value)}
-          placeholder="Enter product ID"
-        />
-        <input
-          type="text"
-          value={updateProductInfo.name}
-          onChange={(e) =>
-            setUpdateProductInfo((prevInfo) => ({
-              ...prevInfo,
-              name: e.target.value,
-            }))
-          }
-          placeholder="Enter new product name"
-        />
-        <input
-          type="number"
-          value={updateProductInfo.price}
-          onChange={(e) =>
-            setUpdateProductInfo((prevInfo) => ({
-              ...prevInfo,
-              price: e.target.value,
-            }))
-          }
-          placeholder="Enter product price"
-        />
-        <input
-          type="number"
-          value={updateProductInfo.quantity}
-          onChange={(e) =>
-            setUpdateProductInfo((prevInfo) => ({
-              ...prevInfo,
-              quantity: e.target.value,
-            }))
-          }
-          placeholder="Enter product quantity"
-        />
-        <button onClick={handleUpdate}>Update Product</button>
-      </div>
+        {/* Update Product Section */}
+        <div className="update-product mb-4">
+          <h3 className="text-center">Update Product</h3>
+          <div className="form-group mb-3">
+            <input
+              type="number"
+              className="form-control"
+              value={productIdForUpdate}
+              onChange={(e) => setProductIdForUpdate(e.target.value)}
+              placeholder="Enter product ID"
+            />
+          </div>
+          <div className="form-group mb-3">
+            <input
+              type="text"
+              className="form-control"
+              value={updateProductInfo.name}
+              onChange={(e) =>
+                setUpdateProductInfo((prevInfo) => ({
+                  ...prevInfo,
+                  name: e.target.value,
+                }))
+              }
+              placeholder="Enter new product name"
+            />
+          </div>
+          <div className="form-group mb-3">
+            <input
+              type="number"
+              className="form-control"
+              value={updateProductInfo.price}
+              onChange={(e) =>
+                setUpdateProductInfo((prevInfo) => ({
+                  ...prevInfo,
+                  price: e.target.value,
+                }))
+              }
+              placeholder="Enter product price"
+            />
+          </div>
+          <div className="form-group mb-3">
+            <input
+              type="number"
+              className="form-control"
+              value={updateProductInfo.quantity}
+              onChange={(e) =>
+                setUpdateProductInfo((prevInfo) => ({
+                  ...prevInfo,
+                  quantity: e.target.value,
+                }))
+              }
+              placeholder="Enter product quantity"
+            />
+          </div>
+          <button className="btn btn-warning" onClick={handleUpdate}>
+            Update Product
+          </button>
+        </div>
 
-      {/* Delete Product */}
-      <div>
-        <input
-          type="number"
-          value={deleteWithId}
-          onChange={(e) => setDeleteWithId(e.target.value)}
-          placeholder="Ürün ID girin"
-        />
-        <button onClick={() => deleteProduct(deleteWithId)}>
-          Delete Product
-        </button>
+        {/* Delete Product Section */}
+        <div className="delete-product mb-4">
+          <h3 className="text-center">Delete Product</h3>
+          <div className="form-group mb-3">
+            <input
+              type="number"
+              className="form-control"
+              value={deleteWithId}
+              onChange={(e) => setDeleteWithId(e.target.value)}
+              placeholder="Ürün ID girin"
+            />
+          </div>
+          <button
+            className="btn btn-danger"
+            onClick={() => deleteProduct(deleteWithId)}
+          >
+            Delete Product
+          </button>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

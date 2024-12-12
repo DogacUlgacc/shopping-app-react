@@ -5,11 +5,11 @@ const Order = () => {
   const [order, setOrder] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const BASE_URL = "http://localhost:8080/orders";
   useEffect(() => {
     const fetchOrder = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/orders/all");
+        const response = await axios.get(`${BASE_URL}/all`);
         setOrder(response.data);
       } catch (err) {
         setError(err);

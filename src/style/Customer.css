@@ -1,0 +1,132 @@
+/* Container for the whole component */
+.customer-container {
+  width: 80%;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Customers section */
+.customers {
+  margin-bottom: 20px;
+}
+
+.customers-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.customer-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.customer-item {
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.customer-detail {
+  margin: 5px 0;
+}
+
+/* Search customer section */
+.search-customer {
+  margin-bottom: 20px;
+}
+
+.search-title {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.search-input {
+  padding: 10px;
+  width: 250px;
+  margin-right: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.search-button {
+  padding: 10px;
+  border: 1px solid #ccc;
+  background-color: #4caf50;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.search-button:hover {
+  background-color: #45a049;
+}
+
+/* Customer details */
+.customer-details {
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 5px;
+}
+
+.details-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.detail-text {
+  font-size: 1rem;
+}
+
+/* Add, Update, Delete customer sections */
+.add-customer,
+.update-customer,
+.delete-customer {
+  margin-top: 20px;
+}
+
+.form-title {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.input-field {
+  padding: 10px;
+  width: 300px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.add-button,
+.update-button,
+.delete-button {
+  padding: 10px;
+  border: 1px solid #ccc;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+}
+.add-button {
+  background-color: #45a049;
+}
+
+.update-button {
+  background-color: #ffc107;
+}
+
+.delete-button {
+  background-color: #dc3545;
+}
+
+.add-button:hover {
+  background-color: #45a049;
+}
+
+/* No customer found */
+.no-customer {
+  color: red;
+  font-size: 1.2rem;
+}

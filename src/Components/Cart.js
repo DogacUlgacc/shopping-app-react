@@ -7,15 +7,15 @@ const Cart = () => {
   const [customerIdForSearch, setCustomerIdForSearch] = useState("");
   const [isSearched, setIsSearched] = useState(false);
 
+  const BASE_URL = "http://localhost:8080/cart";
+
   /* Fetch Cart By userId */
   const fetchCart = async (userId) => {
     setLoading(true);
     setIsSearched(false);
 
     try {
-      const response = await axios.get(
-        `http://localhost:8080/cart/${userId}/items`
-      );
+      const response = await axios.get(`${BASE_URL}/${userId}/items`);
       setCart(response.data);
       setIsSearched(true);
     } catch (err) {
@@ -34,43 +34,55 @@ const Cart = () => {
   }
 
   return (
-    <div>
-      <div>
-        <h2>Cart</h2>
-        <input
-          type="number"
-          value={customerIdForSearch}
-          onChange={(e) => setCustomerIdForSearch(e.target.value)}
-          placeholder="Customer ID girin"
-        />
-        <button
-          onClick={() => {
-            if (customerIdForSearch) {
-              fetchCart(customerIdForSearch);
-            } else {
-              alert("Lütfen bir müşteri ID'si girin!");
-            }
-          }}
-        >
-          Ara
-        </button>
+    <div className="container my-5">
+      {/* Cart Section */}
+      <div className="cart">
+        <h2 className="text-center mb-4">Cart</h2>
 
-        {/* Arama yapılmışsa ve sonuç gösterilmeye hazırsa */}
-        {isSearched &&
-          (cart.length > 0 ? (
-            <div>
-              <h3>Ürün Detayları</h3>
-              {cart.map((item, index) => (
-                <div key={index}>
-                  <p>Adı: {item.productName}</p>
-                  <p>Fiyat: {item.price}</p>
-                  <p>Miktar: {item.quantity}</p>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p>Ürün bulunamadı</p>
-          ))}
+        {/* Customer ID Input and Search Button */}
+        <div className="input-group mb-3">
+          <input
+            type="number"
+            className="form-control"
+            value={customerIdForSearch}
+            onChange={(e) => setCustomerIdForSearch(e.target.value)}
+            placeholder="Customer ID girin"
+          />
+          <button
+            className="btn btn-primary"
+            onClick={() => {
+              if (customerIdForSearch) {
+                fetchCart(customerIdForSearch);
+              } else {
+                alert("Lütfen bir müşteri ID'si girin!");
+              }
+            }}
+          >
+            Ara
+          </button>
+        </div>
+
+        {/* Cart Details */}
+        {isSearched && cart.length > 0 ? (
+          <div>
+            <h3 className="mb-4">Sepet Detayı</h3>
+            {cart.map((item, index) => (
+              <div key={index} className="cart-item border p-3 mb-3 rounded">
+                <p>
+                  <strong>Adı:</strong> {item.productName}
+                </p>
+                <p>
+                  <strong>Fiyat:</strong> ${item.price}
+                </p>
+                <p>
+                  <strong>Miktar:</strong> {item.quantity}
+                </p>
+              </div>
+            ))}
+          </div>
+        ) : isSearched && cart.length === 0 ? (
+          <p className="alert alert-warning">Ürün bulunamadı</p>
+        ) : null}
       </div>
     </div>
   );
