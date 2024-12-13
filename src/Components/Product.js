@@ -109,28 +109,39 @@ const Product = () => {
 
   // 5. Delete a Product (DELETE)
   const deleteProduct = async (productId) => {
-    const id = parseInt(productId);
-    if (isNaN(id)) {
-      console.log("Geçerli bir ürün ID'si girin");
-    }
-
+    const id = parseInt(productId, 10);
     setLoading(true);
+
     try {
-      const response = await axios.delete(`$  {BASE_URL}/delete/${id}`);
-      console.log(`Ürün başarıyla silindi: ${response.data}`);
+      const response = await axios.get(`http://localhost:8080/product/${id}`);
+      if (!response.data) {
+        alert("Product not found!");
+        return;
+      }
+
+      // Ürün varsa sil
+      const deleteResponse = await axios.delete(`${BASE_URL}/delete/${id}`);
+      console.log(`Product deleted!`);
+
+      // Ürün listesini yeniden yükle
       fetchAllProducts();
-    } catch (err) {
-      console.error(
-        "Silme hatası:",
-        err.response ? err.response.data : err.message
-      );
-      setError(err);
+    } catch (error) {
+      if (error.response) {
+        if (error.response.status === 404) {
+          alert("Product not found!");
+        } else {
+          console.error("API error:", error.response.data);
+        }
+      } else {
+        console.error("Error:", error.message);
+      }
+      setError(error);
     } finally {
       setLoading(false);
     }
   };
 
-  // Fetch all products on component mount
+  // Fetch all products
   useEffect(() => {
     fetchAllProducts();
   }, []);

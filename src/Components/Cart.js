@@ -81,7 +81,7 @@ const Cart = () => {
             ))}
           </div>
         ) : isSearched && cart.length === 0 ? (
-          <p className="alert alert-warning">Ürün bulunamadı</p>
+          <p className="alert alert-warning">Sepette ürün bulunamadı</p>
         ) : null}
       </div>
     </div>

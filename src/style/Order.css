@@ -1,0 +1,116 @@
+/* Genel yapı için margin ve padding ayarları */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f8f9fa;
+}
+
+/* Ana container */
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+/* Başlık stilleri */
+h2 {
+  text-align: left;
+  color: #343a40;
+  margin-bottom: 20px;
+}
+
+.text-center {
+  text-align: center;
+}
+
+/* Liste stilleri */
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: #e9ecef;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+}
+
+li ul {
+  padding-left: 20px;
+}
+
+/* Input grubu */
+.input-group {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.input-group .form-control {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+}
+
+.input-group .btn {
+  margin-left: 10px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.input-group .btn:hover {
+  background-color: #0056b3;
+}
+
+/* Alert box */
+.alert {
+  padding: 20px;
+  border-radius: 4px;
+  margin-top: 20px;
+}
+
+.alert-info {
+  background-color: #d1ecf1;
+  border: 1px solid #bee5eb;
+  color: #0c5460;
+}
+
+/* Güçlendirilmiş yazı */
+strong {
+  font-weight: bold;
+  color: #495057;
+}
+
+/* Boşluklar */
+br {
+  margin-top: 10px;
+}
+
+/* Küçük ekran uyumu */
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+
+  .input-group {
+    flex-direction: column;
+  }
+
+  .input-group .btn {
+    margin-left: 0;
+    margin-top: 10px;
+    width: 100%;
+  }
+}
