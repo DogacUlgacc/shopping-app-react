@@ -136,7 +136,7 @@ const Order = () => {
                 </ul>
               </div>
             ) : (
-              <div className="alert alert-warning">No orders found!</div>
+              <div className="alert alert-warning">Customer not found!</div>
             )}
           </div>
         ) : (

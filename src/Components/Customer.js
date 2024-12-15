@@ -21,8 +21,10 @@ const Customer = () => {
   const [isSearched, setIsSearched] = useState(false);
   const [enteredProductId, setEnteredProductId] = useState("");
   const [deleteWithId, setDeleteWithId] = useState("");
-
   const BASE_URL = "http://localhost:8080/customer";
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [isCustomerFound, setIsCustomerFound] = useState(true);
+  const [isUpdated, setIsUpdated] = useState(false);
 
   // 1. Get All Products
   const fetchAllCustomer = async () => {
@@ -92,33 +94,44 @@ const Customer = () => {
 
   /* Update Customer */
   const handleUpdate = async () => {
-    if (!updateCustomerInfo.email) {
-      alert("Lütfen tüm alanları doldurun!");
+    setIsUpdating(true);
+    setIsCustomerFound(true);
+    setIsUpdated(false);
+
+    if (!updateCustomerInfo.email || !customerIdForUpdate) {
+      alert("Please fill the blanks!");
+      setIsUpdating(false);
       return;
     }
+
     const updateCustomer = {
       name: updateCustomerInfo.name,
       email: updateCustomerInfo.email,
       surname: updateCustomerInfo.surname,
     };
-    console.log("Customer updated : ", updateCustomer);
 
     try {
       const response = await axios.put(
         `${BASE_URL}/update/${customerIdForUpdate}`,
         updateCustomer
       );
+
       if (response.status === 200) {
         console.log("Customer başarıyla güncellendi!");
+        setIsUpdated(true); // Güncelleme başarılı olduğunda true yap
         setCustomerIdForUpdate("");
         setUpdateCustomerInfo({ name: "", surname: "", email: "" });
         fetchAllCustomer();
-      } else {
-        console.log("Customer güncellenirken bir hata oluştu.");
       }
     } catch (error) {
-      console.error("Hata:", error);
-      console.log("Bir hata oluştu. Lütfen tekrar deneyin.");
+      if (error.response && error.response.status === 404) {
+        console.log("Customer bulunamadı.");
+        setIsCustomerFound(false); // Müşteri bulunamazsa false yap
+      } else {
+        console.error("Bir hata oluştu:", error);
+      }
+    } finally {
+      setIsUpdating(false); // İşlem bittiğinde yükleme durumu
     }
   };
 
@@ -211,7 +224,7 @@ const Customer = () => {
               <p className="detail-text">E-posta: {customer.email}</p>
             </div>
           ) : (
-            <p className="no-customer">Customer bulunamadı</p>
+            <p className="no-customer">Customer not found!</p>
           ))}
       </div>
 
@@ -282,6 +295,13 @@ const Customer = () => {
         <button className="update-button" onClick={handleUpdate}>
           Update Customer
         </button>
+        <div>
+          {isUpdating && <p>Updating...</p>}
+          {!isUpdating && isUpdated && <p>Customer Updated</p>}{" "}
+          {!isUpdating && !isCustomerFound && (
+            <p className="no-customer">Customer Not Found</p>
+          )}{" "}
+        </div>
       </div>
 
       <div className="delete-customer">
