@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../style/Product.css";
 const Product = () => {
+  const BASE_URL = "http://localhost:8080/product";
   const [products, setProducts] = useState([]);
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -20,7 +21,11 @@ const Product = () => {
   const [productIdForUpdate, setProductIdForUpdate] = useState("");
   const [isSearched, setIsSearched] = useState(false);
   const [deleteWithId, setDeleteWithId] = useState("");
-  const BASE_URL = "http://localhost:8080/product";
+
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [isProductFound, setIsProductFound] = useState(true);
+  const [isUpdated, setIsUpdated] = useState(false);
+
   // 1. Get All Products
   const fetchAllProducts = async () => {
     setLoading(true);
@@ -72,12 +77,17 @@ const Product = () => {
 
   // 4. Update an Existing Product (PUT)
   const handleUpdate = async () => {
+    setIsUpdating(true);
+    setIsUpdated(false);
+    setIsProductFound(false);
+
     if (
       !updateProductInfo.name ||
       !updateProductInfo.price ||
       !updateProductInfo.quantity
     ) {
-      alert("Lütfen tüm alanları doldurun!");
+      alert("Please fill the blanks!");
+      setIsUpdating(false);
       return;
     }
 
@@ -95,15 +105,17 @@ const Product = () => {
 
       if (response.status === 200) {
         console.log("Ürün başarıyla güncellendi!");
+        setIsUpdated(true);
         setProductIdForUpdate("");
         setUpdateProductInfo({ name: "", quantity: "", price: "" });
         fetchAllProducts();
-      } else {
-        console.log("Ürün güncellenirken bir hata oluştu.");
       }
     } catch (error) {
       console.error("Hata:", error);
+      setIsProductFound(false);
       console.log("Bir hata oluştu. Lütfen tekrar deneyin.");
+    } finally {
+      setIsUpdating(false);
     }
   };
 
@@ -152,7 +164,6 @@ const Product = () => {
   return (
     <>
       <div className="container my-5">
-        {/* Product Manager Section */}
         <div className="product-manager mb-4">
           <h2 className="text-center">Product Manager</h2>
 
@@ -173,7 +184,7 @@ const Product = () => {
           <div className="input-group mb-3">
             <input
               type="number"
-              className="form-control"
+              className="form-control mb-3"
               value={enteredProductId}
               onChange={(e) => setEnteredProductId(e.target.value)}
               placeholder="Ürün ID girin"
@@ -194,7 +205,7 @@ const Product = () => {
               <p>Miktar: {product.quantity}</p>
             </div>
           ) : isSearched && !product ? (
-            <div className="alert alert-danger">Ürün bulunamadı</div>
+            <div className="alert alert-danger">Product not found!</div>
           ) : null}
         </div>
 
@@ -305,6 +316,13 @@ const Product = () => {
           <button className="btn btn-warning" onClick={handleUpdate}>
             Update Product
           </button>
+          <div>
+            {isUpdating && <p>Updating...</p>}
+            {!isUpdating && isUpdated && <p>Product Updated</p>}{" "}
+            {!isUpdating && !isProductFound && (
+              <p className="alert alert-danger">Product Not Found</p>
+            )}{" "}
+          </div>
         </div>
 
         {/* Delete Product Section */}
