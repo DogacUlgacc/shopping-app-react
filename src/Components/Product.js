@@ -26,6 +26,9 @@ const Product = () => {
   const [isProductFound, setIsProductFound] = useState(true);
   const [isUpdated, setIsUpdated] = useState(false);
 
+  const [isDeleted, setIsDeleted] = useState(false);
+  const [isDeleteAttempted, setIsDeleteAttempted] = useState(false);
+
   // 1. Get All Products
   const fetchAllProducts = async () => {
     setLoading(true);
@@ -53,6 +56,12 @@ const Product = () => {
 
   // 3. Add a New Product (POST)
   const addProduct = async () => {
+    if (!productInfo.name || !productInfo.price || !productInfo.quantity) {
+      alert("Please fill the blanks!");
+      setIsUpdating(false);
+      return;
+    }
+
     try {
       const response = await fetch(`${BASE_URL}/add`, {
         method: "POST",
@@ -79,7 +88,7 @@ const Product = () => {
   const handleUpdate = async () => {
     setIsUpdating(true);
     setIsUpdated(false);
-    setIsProductFound(false);
+    setIsProductFound(true);
 
     if (
       !updateProductInfo.name ||
@@ -123,32 +132,30 @@ const Product = () => {
   const deleteProduct = async (productId) => {
     const id = parseInt(productId, 10);
     setLoading(true);
+    setIsDeleteAttempted(true); // Silme işlemi başlatıldı
+    setIsDeleted(false); // Yeni işlem için sıfırla
 
     try {
       const response = await axios.get(`http://localhost:8080/product/${id}`);
       if (!response.data) {
-        alert("Product not found!");
+        console.log("Product not found!");
+        setIsDeleted(false);
         return;
       }
 
       // Ürün varsa sil
       const deleteResponse = await axios.delete(`${BASE_URL}/delete/${id}`);
       console.log(`Product deleted!`);
+      setIsDeleted(true);
 
       // Ürün listesini yeniden yükle
       fetchAllProducts();
     } catch (error) {
-      if (error.response) {
-        if (error.response.status === 404) {
-          alert("Product not found!");
-        } else {
-          console.error("API error:", error.response.data);
-        }
-      } else {
-        console.error("Error:", error.message);
-      }
+      console.error("Hata:", error);
+      setIsDeleted(false);
       setError(error);
     } finally {
+      setDeleteWithId("");
       setLoading(false);
     }
   };
@@ -318,7 +325,9 @@ const Product = () => {
           </button>
           <div>
             {isUpdating && <p>Updating...</p>}
-            {!isUpdating && isUpdated && <p>Product Updated</p>}{" "}
+            {!isUpdating && isUpdated && (
+              <p className="alert alert-success">Product Updated</p>
+            )}{" "}
             {!isUpdating && !isProductFound && (
               <p className="alert alert-danger">Product Not Found</p>
             )}{" "}
@@ -343,6 +352,16 @@ const Product = () => {
           >
             Delete Product
           </button>
+          <div>
+            {isDeleteAttempted && isDeleted && (
+              <p className="alert alert-success">Product deleted.</p>
+            )}
+            {isDeleteAttempted && !isDeleted && (
+              <p className="alert alert-danger">
+                The product could not be deleted.
+              </p>
+            )}
+          </div>
         </div>
       </div>
     </>
