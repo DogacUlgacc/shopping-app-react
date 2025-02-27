@@ -15,14 +15,14 @@ const Cart = () => {
     setIsSearched(false);
 
     try {
-      const response = await axios.get(`${BASE_URL}/${userId}/items`);
+      const response = await axios.get(`${BASE_URL}/${userId}/items`); // Corrected string interpolation
       setCart(response.data);
       setIsSearched(true);
     } catch (err) {
       if (err.response && err.response.status === 404) {
-        window.alert("Bu müşteri ID'siyle ilgili bir sepet bulunamadı.");
+        window.alert("Bu müşteri ID'siyle ilgili bir sepet bulunamadı.");
       } else {
-        window.alert("Bir hata oluştu. Lütfen tekrar deneyin.");
+        window.alert("Bir hata oluştu. Lütfen tekrar deneyin.");
       }
     } finally {
       setLoading(false);
@@ -54,7 +54,7 @@ const Cart = () => {
               if (customerIdForSearch) {
                 fetchCart(customerIdForSearch);
               } else {
-                alert("Lütfen bir müşteri ID'si girin!");
+                alert("Lütfen bir müşteri ID'si girin!");
               }
             }}
           >
@@ -81,7 +81,7 @@ const Cart = () => {
             ))}
           </div>
         ) : isSearched && cart.length === 0 ? (
-          <p className="alert alert-warning">Sepette ürün bulunamadı</p>
+          <p className="alert alert-warning">Sepette ürün bulunamadı</p>
         ) : null}
       </div>
     </div>

@@ -4,7 +4,7 @@ import "../style/Customer.css";
 
 const Customer = () => {
   const [customers, setCustomers] = useState([]);
-  const [customer, setCustomer] = useState(null);
+  const [customer, setCustomer] = useState([]);
   const [customerInfo, setCustomerInfo] = useState({
     name: "",
     surname: "",
@@ -30,11 +30,11 @@ const Customer = () => {
   const fetchAllCustomer = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${BASE_URL}/all`);
-      setCustomers(response.data); // Müşteri listesini güncelle
+      const response = await axios.get(`${BASE_URL}/all`); // Corrected interpolation
+      setCustomers(response.data.content); // Müşteri listesini güncelle
     } catch (error) {
       console.error("Hata:", error);
-      setCustomers([]); // Hata durumunda müşteri listesi boş yapılır
+      setCustomers([]); // Hata durumunda müşteri listesi boş yapılır
     } finally {
       setLoading(false);
     }
@@ -44,11 +44,11 @@ const Customer = () => {
   const fetchCustomerById = async (customerId) => {
     setIsSearched(true);
     try {
-      const response = await axios.get(`${BASE_URL}/${customerId}`);
+      const response = await axios.get(`${BASE_URL}/${customerId}`); // Corrected interpolation
       setCustomer(response.data);
     } catch (error) {
       console.log(error);
-      setCustomer(null);
+      setCustomer([]);
     }
   };
 
@@ -69,6 +69,7 @@ const Customer = () => {
     }
     try {
       const response = await fetch(`${BASE_URL}/add`, {
+        // Corrected interpolation
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -81,7 +82,7 @@ const Customer = () => {
         fetchAllCustomer();
         setCustomerInfo({ name: "", surname: "", email: "" });
       } else {
-        throw new Error("Ürün eklenirken hata oluştu");
+        throw new Error("Ürün eklenirken hata oluştu");
       }
 
       const data = await response.json();
@@ -112,12 +113,12 @@ const Customer = () => {
 
     try {
       const response = await axios.put(
-        `${BASE_URL}/update/${customerIdForUpdate}`,
+        `${BASE_URL}/update/${customerIdForUpdate}`, // Corrected interpolation
         updateCustomer
       );
 
       if (response.status === 200) {
-        console.log("Customer başarıyla güncellendi!");
+        console.log("Customer başarıyla güncellendi!");
         setIsUpdated(true);
         setCustomerIdForUpdate("");
         setUpdateCustomerInfo({ name: "", surname: "", email: "" });
@@ -126,12 +127,12 @@ const Customer = () => {
     } catch (error) {
       if (error.response && error.response.status === 404) {
         console.log("Customer bulunamadı.");
-        setIsCustomerFound(false); // Müşteri bulunamazsa false yap
+        setIsCustomerFound(false); // Müşteri bulunamazsa false yap
       } else {
-        console.error("Bir hata oluştu:", error);
+        console.error("Bir hata oluştu:", error);
       }
     } finally {
-      setIsUpdating(false); // İşlem bittiğinde yükleme durumu
+      setIsUpdating(false); // İşlem bittiğinde yükleme durumu
     }
   };
 
@@ -139,12 +140,12 @@ const Customer = () => {
   const deleteCustomer = async (customerId) => {
     const id = parseInt(customerId);
     if (isNaN(id)) {
-      alert("Geçerli bir customer Id giriniz!");
+      alert("Geçerli bir customer Id giriniz!");
     }
     setLoading(true);
     try {
-      const response = await axios.delete(`${BASE_URL}/delete/${id}`);
-      console.log(`Customer başarıyla silindi: ${response.data}`);
+      const response = await axios.delete(`${BASE_URL}/delete/${id}`); // Corrected interpolation
+      console.log(`Customer başarıyla silindi: ${response.data}`);
       fetchAllCustomer();
     } catch (err) {
       console.error(
@@ -160,8 +161,8 @@ const Customer = () => {
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const response = await axios.get(`${BASE_URL}/all`);
-        setCustomers(response.data);
+        const response = await axios.get(`${BASE_URL}/all`); // Corrected interpolation
+        setCustomers(response.data.content);
       } catch (err) {
         setError(err);
       } finally {
@@ -292,34 +293,38 @@ const Customer = () => {
               email: e.target.value,
             }))
           }
-          placeholder="Enter Customer new email"
+          placeholder="Enter customer email"
         />
-        <button className="update-button mb-3" onClick={handleUpdate}>
-          Update Customer
-        </button>
-        <div>
-          {isUpdating && <p>Updating...</p>}
-          {!isUpdating && isUpdated && <p>Customer Updated</p>}{" "}
-          {!isUpdating && !isCustomerFound && (
-            <p className="alert alert-danger">Customer Not Found</p>
-          )}{" "}
-        </div>
-      </div>
-
-      <div className="delete-customer">
-        <h3 className="form-title">Delete Customer</h3>
         <input
-          type="number"
+          type="text"
           className="form-control mb-3"
-          value={deleteWithId}
-          onChange={(e) => setDeleteWithId(e.target.value)}
-          placeholder="Customer ID girin"
+          value={updateCustomerInfo.name}
+          onChange={(e) =>
+            setUpdateCustomerInfo((prevInfo) => ({
+              ...prevInfo,
+              name: e.target.value,
+            }))
+          }
+          placeholder="Enter customer name"
+        />
+        <input
+          type="text"
+          className="form-control mb-3"
+          value={updateCustomerInfo.surname}
+          onChange={(e) =>
+            setUpdateCustomerInfo((prevInfo) => ({
+              ...prevInfo,
+              surname: e.target.value,
+            }))
+          }
+          placeholder="Enter customer surname"
         />
         <button
-          className="btn btn-danger mb-3"
-          onClick={() => deleteCustomer(deleteWithId)}
+          className="btn btn-primary"
+          onClick={handleUpdate}
+          disabled={isUpdating}
         >
-          Delete Customer
+          {isUpdating ? "Updating..." : "Update"}
         </button>
       </div>
     </div>

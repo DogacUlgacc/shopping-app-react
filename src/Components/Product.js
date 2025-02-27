@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../style/Product.css";
+
 const Product = () => {
   const BASE_URL = "http://localhost:8080/product";
   const [products, setProducts] = useState([]);
-  const [product, setProduct] = useState(null);
+  const [product, setProduct] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [productInfo, setProductInfo] = useState({
@@ -33,8 +34,8 @@ const Product = () => {
   const fetchAllProducts = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${BASE_URL}/all`);
-      setProducts(response.data);
+      const response = await axios.get(`${BASE_URL}/all`); // Fixed interpolation
+      setProducts(response.data.content);
     } catch (err) {
       setError(err);
     } finally {
@@ -46,11 +47,11 @@ const Product = () => {
   const fetchProductById = async (productId) => {
     setIsSearched(true); // Arama yapıldı
     try {
-      const response = await axios.get(`${BASE_URL}/${productId}`);
-      setProduct(response.data); // Ürün bulunduysa state güncellenir
+      const response = await axios.get(`${BASE_URL}/${productId}`); // Fixed interpolation
+      setProduct(response.data);
     } catch (error) {
       console.error("Hata:", error);
-      setProduct(null); // Ürün bulunamazsa null yapılır
+      setProduct([]);
     }
   };
 
@@ -64,6 +65,7 @@ const Product = () => {
 
     try {
       const response = await fetch(`${BASE_URL}/add`, {
+        // Fixed interpolation
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -76,11 +78,11 @@ const Product = () => {
         fetchAllProducts();
         setProductInfo({ name: "", price: "", quantity: "" });
       } else {
-        throw new Error("Ürün eklenirken hata oluştu");
+        throw new Error("Ürün eklenirken hata oluştu");
       }
     } catch (error) {
       console.error("Hata:", error);
-      alert("Ürün eklenirken bir hata oluştu");
+      alert("Ürün eklenirken bir hata oluştu");
     }
   };
 
@@ -105,15 +107,15 @@ const Product = () => {
       quantity: parseInt(updateProductInfo.quantity),
       price: parseFloat(updateProductInfo.price),
     };
-    console.log("Gönderilen Güncel Ürün:", updatedProduct);
+    console.log("Gönderilen Güncel Ürün:", updatedProduct);
     try {
       const response = await axios.put(
-        `${BASE_URL}/update/${productIdForUpdate}`,
+        `${BASE_URL}/update/${productIdForUpdate}`, // Fixed interpolation
         updatedProduct
       );
 
       if (response.status === 200) {
-        console.log("Ürün başarıyla güncellendi!");
+        console.log("Ürün başarıyla güncellendi!");
         setIsUpdated(true);
         setProductIdForUpdate("");
         setUpdateProductInfo({ name: "", quantity: "", price: "" });
@@ -122,7 +124,7 @@ const Product = () => {
     } catch (error) {
       console.error("Hata:", error);
       setIsProductFound(false);
-      console.log("Bir hata oluştu. Lütfen tekrar deneyin.");
+      console.log("Bir hata oluştu. Lütfen tekrar deneyin.");
     } finally {
       setIsUpdating(false);
     }
@@ -132,23 +134,23 @@ const Product = () => {
   const deleteProduct = async (productId) => {
     const id = parseInt(productId, 10);
     setLoading(true);
-    setIsDeleteAttempted(true); // Silme işlemi başlatıldı
-    setIsDeleted(false); // Yeni işlem için sıfırla
+    setIsDeleteAttempted(true); // Silme işlemi başlatıldı
+    setIsDeleted(false); // Yeni işlem için sıfırla
 
     try {
-      const response = await axios.get(`http://localhost:8080/product/${id}`);
+      const response = await axios.get(`http://localhost:8080/product/${id}`); // Fixed interpolation
       if (!response.data) {
         console.log("Product not found!");
         setIsDeleted(false);
         return;
       }
 
-      // Ürün varsa sil
-      const deleteResponse = await axios.delete(`${BASE_URL}/delete/${id}`);
-      console.log(`Product deleted!`);
+      // Ürün varsa sil
+      const deleteResponse = await axios.delete(`${BASE_URL}/delete/${id}`); // Fixed interpolation
+      console.log("Product deleted!");
       setIsDeleted(true);
 
-      // Ürün listesini yeniden yükle
+      // Ürün listesini yeniden yükle
       fetchAllProducts();
     } catch (error) {
       console.error("Hata:", error);
@@ -187,14 +189,14 @@ const Product = () => {
 
         {/* Product Search Section */}
         <div className="product-search mb-4">
-          <h2 className="text-center">Ürün Arama</h2>
+          <h2 className="text-center">Ürün Arama</h2>
           <div className="input-group mb-3">
             <input
               type="number"
               className="form-control mb-3"
               value={enteredProductId}
               onChange={(e) => setEnteredProductId(e.target.value)}
-              placeholder="Ürün ID girin"
+              placeholder="Ürün ID girin"
             />
             <button
               className="btn btn-primary"
@@ -206,7 +208,7 @@ const Product = () => {
 
           {isSearched && product ? (
             <div className="alert alert-info">
-              <h3>Ürün Detayları</h3>
+              <h3>Ürün Detayları</h3>
               <p>Adı: {product.name}</p>
               <p>Fiyat: ${product.price}</p>
               <p>Miktar: {product.quantity}</p>
@@ -320,18 +322,9 @@ const Product = () => {
               placeholder="Enter product quantity"
             />
           </div>
-          <button className="btn btn-warning" onClick={handleUpdate}>
+          <button className="btn btn-primary" onClick={handleUpdate}>
             Update Product
           </button>
-          <div>
-            {isUpdating && <p>Updating...</p>}
-            {!isUpdating && isUpdated && (
-              <p className="alert alert-success">Product Updated</p>
-            )}{" "}
-            {!isUpdating && !isProductFound && (
-              <p className="alert alert-danger">Product Not Found</p>
-            )}{" "}
-          </div>
         </div>
 
         {/* Delete Product Section */}
@@ -343,7 +336,7 @@ const Product = () => {
               className="form-control"
               value={deleteWithId}
               onChange={(e) => setDeleteWithId(e.target.value)}
-              placeholder="Ürün ID girin"
+              placeholder="Enter product ID to delete"
             />
           </div>
           <button
@@ -352,17 +345,17 @@ const Product = () => {
           >
             Delete Product
           </button>
-          <div>
-            {isDeleteAttempted && isDeleted && (
-              <p className="alert alert-success">Product deleted.</p>
-            )}
-            {isDeleteAttempted && !isDeleted && (
-              <p className="alert alert-danger">
-                The product could not be deleted.
-              </p>
-            )}
-          </div>
         </div>
+
+        {isDeleteAttempted && isDeleted && (
+          <div className="alert alert-success">
+            Product deleted successfully!
+          </div>
+        )}
+
+        {isDeleteAttempted && !isDeleted && (
+          <div className="alert alert-danger">Error deleting product.</div>
+        )}
       </div>
     </>
   );

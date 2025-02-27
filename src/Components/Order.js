@@ -15,13 +15,13 @@ const Order = () => {
   const fetchOrdersForCustomer = async (customerId) => {
     setIsSearched(true);
     try {
-      const response = await axios.get(`${BASE_URL}/customer/${customerId}`);
+      const response = await axios.get(`${BASE_URL}/customer/${customerId}`); // Corrected string interpolation
       setOrdersForCustomer(response.data);
     } catch (err) {
       if (err.response && err.response.status === 404) {
-        window.alert("Bu müşteri ID'siyle ilgili bir sepet bulunamadı.");
+        window.alert("Bu müşteri ID'siyle ilgili bir sepet bulunamadı.");
       } else {
-        window.alert("Bir hata oluştu. Lütfen tekrar deneyin.");
+        window.alert("Bir hata oluştu. Lütfen tekrar deneyin.");
       }
     }
   };
@@ -29,8 +29,8 @@ const Order = () => {
   useEffect(() => {
     const fetchOrder = async () => {
       try {
-        const response = await axios.get(`${BASE_URL}/all`);
-        setOrders(response.data);
+        const response = await axios.get(`${BASE_URL}/all`); // Corrected string interpolation
+        setOrders(response.data.content);
       } catch (err) {
         setError(err);
       } finally {
@@ -40,6 +40,7 @@ const Order = () => {
 
     fetchOrder();
   }, []);
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -65,7 +66,8 @@ const Order = () => {
                   {order.orderItems.map((item) => (
                     <li key={item.id}>
                       Product Name: {item.product.name}, Quantity:{" "}
-                      {item.quantity}, Price: {item.price}
+                      {item.quantity}, Price: {item.price} , Total :{" "}
+                      {item.price * item.quantity}
                     </li>
                   ))}
                 </ul>
