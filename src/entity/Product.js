@@ -30,11 +30,13 @@ const Product = () => {
   const [isDeleted, setIsDeleted] = useState(false);
   const [isDeleteAttempted, setIsDeleteAttempted] = useState(false);
 
+  const token = localStorage.getItem("token"); // veya "accessToken"
+
   // 1. Get All Products
   const fetchAllProducts = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${BASE_URL}/all`); // Fixed interpolation
+      const response = await axios.get(`${BASE_URL}/all`);
       setProducts(response.data.content);
     } catch (err) {
       setError(err);
@@ -62,13 +64,18 @@ const Product = () => {
       setIsUpdating(false);
       return;
     }
+    if (!token) {
+      console.error("Kullanıcı giriş yapmamış.");
+      setLoading(false);
+      return;
+    }
 
     try {
-      const response = await fetch(`${BASE_URL}/add`, {
-        // Fixed interpolation
+      const response = await axios.post(`${BASE_URL}/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(productInfo),
       });
@@ -77,12 +84,15 @@ const Product = () => {
         console.log("Product added.");
         fetchAllProducts();
         setProductInfo({ name: "", price: "", quantity: "" });
-      } else {
-        throw new Error("Ürün eklenirken hata oluştu");
       }
     } catch (error) {
-      console.error("Hata:", error);
-      alert("Ürün eklenirken bir hata oluştu");
+      if (error.response && error.response.status === 403) {
+        alert(
+          "Bu işlemi yapma yetkiniz yok. Sadece admin kullanıcılar ürün silebilir."
+        );
+      } else {
+        console.error("Beklenmeyen bir hata oluştu!", error);
+      }
     }
   };
 
@@ -101,7 +111,11 @@ const Product = () => {
       setIsUpdating(false);
       return;
     }
-
+    if (!token) {
+      console.error("Kullanıcı giriş yapmamış.");
+      setLoading(false);
+      return;
+    }
     const updatedProduct = {
       name: updateProductInfo.name,
       quantity: parseInt(updateProductInfo.quantity),
@@ -110,7 +124,7 @@ const Product = () => {
     console.log("Gönderilen Güncel Ürün:", updatedProduct);
     try {
       const response = await axios.put(
-        `${BASE_URL}/update/${productIdForUpdate}`, // Fixed interpolation
+        `${BASE_URL}/update/${productIdForUpdate}`,
         updatedProduct
       );
 
@@ -122,9 +136,14 @@ const Product = () => {
         fetchAllProducts();
       }
     } catch (error) {
-      console.error("Hata:", error);
       setIsProductFound(false);
-      console.log("Bir hata oluştu. Lütfen tekrar deneyin.");
+      if (error.response && error.response.status === 403) {
+        alert(
+          "Bu işlemi yapma yetkiniz yok. Sadece admin kullanıcılar ürün silebilir."
+        );
+      } else {
+        console.error("Beklenmeyen bir hata oluştu!", error);
+      }
     } finally {
       setIsUpdating(false);
     }
@@ -134,28 +153,52 @@ const Product = () => {
   const deleteProduct = async (productId) => {
     const id = parseInt(productId, 10);
     setLoading(true);
-    setIsDeleteAttempted(true); // Silme işlemi başlatıldı
-    setIsDeleted(false); // Yeni işlem için sıfırla
+    setIsDeleteAttempted(true);
+    setIsDeleted(false);
+
+    if (!token) {
+      console.error("Kullanıcı giriş yapmamış.");
+      setLoading(false);
+      return;
+    }
 
     try {
-      const response = await axios.get(`http://localhost:8080/product/${id}`); // Fixed interpolation
+      // Ürün var mı kontrolü
+      const response = await axios.get(`http://localhost:8080/product/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
       if (!response.data) {
         console.log("Product not found!");
         setIsDeleted(false);
+        setLoading(false);
         return;
       }
 
-      // Ürün varsa sil
-      const deleteResponse = await axios.delete(`${BASE_URL}/delete/${id}`); // Fixed interpolation
+      // Ürün varsa sil
+      await axios.delete(`${BASE_URL}/delete/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
       console.log("Product deleted!");
       setIsDeleted(true);
 
-      // Ürün listesini yeniden yükle
+      // Ürün listesini yeniden yükle
       fetchAllProducts();
     } catch (error) {
-      console.error("Hata:", error);
       setIsDeleted(false);
-      setError(error);
+
+      if (error.response && error.response.status === 403) {
+        alert(
+          "Bu işlemi yapma yetkiniz yok. Sadece admin kullanıcılar ürün silebilir."
+        );
+      } else {
+        console.error("Beklenmeyen bir hata oluştu!", error);
+      }
     } finally {
       setDeleteWithId("");
       setLoading(false);
@@ -322,7 +365,7 @@ const Product = () => {
               placeholder="Enter product quantity"
             />
           </div>
-          <button className="btn btn-primary" onClick={handleUpdate}>
+          <button className="btn btn-warning" onClick={handleUpdate}>
             Update Product
           </button>
         </div>

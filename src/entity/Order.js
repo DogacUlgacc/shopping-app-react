@@ -54,7 +54,7 @@ const Order = () => {
       <div>
         <h2>Orders</h2>
         <ul>
-          {orders.map((order) => (
+          {orders?.map((order) => (
             <li key={order.id}>
               <div>
                 <strong>Customer:</strong> {order.customer.name}{" "}

@@ -30,7 +30,8 @@ const Customer = () => {
   const fetchAllCustomer = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${BASE_URL}/all`); // Corrected interpolation
+      const response = await axios.get(`${BASE_URL}/all`);
+
       setCustomers(response.data.content); // Müşteri listesini güncelle
     } catch (error) {
       console.error("Hata:", error);
@@ -44,7 +45,7 @@ const Customer = () => {
   const fetchCustomerById = async (customerId) => {
     setIsSearched(true);
     try {
-      const response = await axios.get(`${BASE_URL}/${customerId}`); // Corrected interpolation
+      const response = await axios.get(`${BASE_URL}/${customerId}`);
       setCustomer(response.data);
     } catch (error) {
       console.log(error);
@@ -70,6 +71,7 @@ const Customer = () => {
     try {
       const response = await fetch(`${BASE_URL}/add`, {
         // Corrected interpolation
+
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -146,6 +148,7 @@ const Customer = () => {
     try {
       const response = await axios.delete(`${BASE_URL}/delete/${id}`); // Corrected interpolation
       console.log(`Customer başarıyla silindi: ${response.data}`);
+
       fetchAllCustomer();
     } catch (err) {
       console.error(
@@ -185,7 +188,7 @@ const Customer = () => {
       <div className="customers mb-4">
         <h2 className="text-center">Customers</h2>
         <ul className="customer-list">
-          {customers.map((customer) => (
+          {customers?.map((customer) => (
             <li key={customer.id} className="customer-item">
               <p className="customer-detail">Customer name: {customer.name}</p>
               <p className="customer-detail">
@@ -293,38 +296,34 @@ const Customer = () => {
               email: e.target.value,
             }))
           }
-          placeholder="Enter customer email"
+          placeholder="Enter Customer new email"
         />
+        <button className="update-button mb-3" onClick={handleUpdate}>
+          Update Customer
+        </button>
+        <div>
+          {isUpdating && <p>Updating...</p>}
+          {!isUpdating && isUpdated && <p>Customer Updated</p>}{" "}
+          {!isUpdating && !isCustomerFound && (
+            <p className="alert alert-danger">Customer Not Found</p>
+          )}{" "}
+        </div>
+      </div>
+
+      <div className="delete-customer">
+        <h3 className="form-title">Delete Customer</h3>
         <input
-          type="text"
+          type="number"
           className="form-control mb-3"
-          value={updateCustomerInfo.name}
-          onChange={(e) =>
-            setUpdateCustomerInfo((prevInfo) => ({
-              ...prevInfo,
-              name: e.target.value,
-            }))
-          }
-          placeholder="Enter customer name"
-        />
-        <input
-          type="text"
-          className="form-control mb-3"
-          value={updateCustomerInfo.surname}
-          onChange={(e) =>
-            setUpdateCustomerInfo((prevInfo) => ({
-              ...prevInfo,
-              surname: e.target.value,
-            }))
-          }
-          placeholder="Enter customer surname"
+          value={deleteWithId}
+          onChange={(e) => setDeleteWithId(e.target.value)}
+          placeholder="Customer ID girin"
         />
         <button
-          className="btn btn-primary"
-          onClick={handleUpdate}
-          disabled={isUpdating}
+          className="btn btn-danger mb-3"
+          onClick={() => deleteCustomer(deleteWithId)}
         >
-          {isUpdating ? "Updating..." : "Update"}
+          Delete Customer
         </button>
       </div>
     </div>

@@ -3,7 +3,7 @@ body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f8f9fa;
+  background-color: #fbffe4; /* Light pastel yellow */
 }
 
 /* Ana container */
@@ -20,7 +20,7 @@ body {
 /* Başlık stilleri */
 h2 {
   text-align: left;
-  color: #343a40;
+  color: #000;
   margin-bottom: 20px;
 }
 
@@ -37,8 +37,8 @@ ul {
 li {
   margin-bottom: 10px;
   padding: 10px;
-  background-color: #e9ecef;
-  border: 1px solid #dee2e6;
+  background-color: #b3d8a8; /* Light teal */
+  border: 1px solid #b3d8a8; /* Light green */
   border-radius: 4px;
 }
 
@@ -56,14 +56,14 @@ li ul {
 .input-group .form-control {
   flex: 1;
   padding: 10px;
-  border: 1px solid #ced4da;
+  border: 1px solid #b3d8a8; /* Light green */
   border-radius: 4px;
 }
 
 .input-group .btn {
   margin-left: 10px;
   padding: 10px 20px;
-  background-color: #007bff;
+  /*background-color: #3d8d7a; /* Soft green */
   color: #fff;
   border: none;
   border-radius: 4px;
@@ -71,7 +71,7 @@ li ul {
 }
 
 .input-group .btn:hover {
-  background-color: #0056b3;
+  background-color: #2a6e56; /* Darker green */
 }
 
 /* Alert box */
@@ -82,15 +82,15 @@ li ul {
 }
 
 .alert-info {
-  background-color: #d1ecf1;
+  background-color: #b3d8a8;
   border: 1px solid #bee5eb;
-  color: #0c5460;
+  color: #000;
 }
 
 /* Güçlendirilmiş yazı */
 strong {
   font-weight: bold;
-  color: #495057;
+  color: #000;
 }
 
 /* Boşluklar */

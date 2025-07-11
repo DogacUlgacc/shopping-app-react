@@ -15,7 +15,7 @@ const Cart = () => {
     setIsSearched(false);
 
     try {
-      const response = await axios.get(`${BASE_URL}/${userId}/items`); // Corrected string interpolation
+      const response = await axios.get(`${BASE_URL}/${userId}/items`);
       setCart(response.data);
       setIsSearched(true);
     } catch (err) {

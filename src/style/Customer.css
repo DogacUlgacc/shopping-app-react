@@ -2,18 +2,21 @@
 .customer-container {
   width: 80%;
   margin: 0 auto;
-  padding: 20px;
+  padding: 1.25rem; /* 20px → 1.25rem */
+  background-color: #fbffe4;
+  border-radius: 0.5rem; /* 8px → 0.5rem */
 }
 
 /* Customers section */
 .customers {
-  margin-bottom: 20px;
+  margin-bottom: 1.25rem; /* 20px → 1.25rem */
 }
 
 .customers-title {
   font-size: 2rem;
   font-weight: bold;
-  margin-bottom: 10px;
+  margin-bottom: 0.625rem; /* 10px → 0.625rem */
+  color: #000;
 }
 
 .customer-list {
@@ -22,52 +25,57 @@
 }
 
 .customer-item {
-  padding: 10px;
-  margin-bottom: 15px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+  padding: 0.625rem; /* 10px → 0.625rem */
+  margin-bottom: 0.9375rem; /* 15px → 0.9375rem */
+  border: 0.0625rem solid #a3d1c6; /* 1px → 0.0625rem */
+  border-radius: 0.3125rem; /* 5px → 0.3125rem */
+  background-color: #b3d8a8;
+  color: #000;
 }
 
 .customer-detail {
-  margin: 5px 0;
+  margin: 0.3125rem 0; /* 5px → 0.3125rem */
 }
 
 /* Search customer section */
 .search-customer {
-  margin-bottom: 20px;
+  margin-bottom: 1.25rem;
 }
 
 .search-title {
   font-size: 1.5rem;
-  margin-bottom: 10px;
+  margin-bottom: 0.625rem;
 }
 
 .search-input {
-  padding: 10px;
-  width: 250px;
-  margin-right: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  padding: 0.625rem;
+  width: 15.625rem; /* 250px → 15.625rem */
+  margin-right: 0.625rem;
+  border: 0.0625rem solid #a3d1c6;
+  border-radius: 0.3125rem;
+  background-color: #fff;
+  color: #000;
 }
 
 .search-button {
-  padding: 10px;
-  border: 1px solid #ccc;
-  background-color: #4caf50;
+  padding: 0.625rem;
+  border: 0.0625rem solid #3d8d7a;
+  background-color: #a3d1c6;
   color: white;
-  border-radius: 5px;
+  border-radius: 0.3125rem;
   cursor: pointer;
 }
 
 .search-button:hover {
-  background-color: #45a049;
+  background-color: #3d8d7a;
 }
 
 /* Customer details */
 .customer-details {
-  background-color: #f9f9f9;
-  padding: 15px;
-  border-radius: 5px;
+  background-color: #b3d8a8;
+  padding: 0.9375rem;
+  border-radius: 0.3125rem;
+  color: #000;
 }
 
 .details-title {
@@ -83,50 +91,62 @@
 .add-customer,
 .update-customer,
 .delete-customer {
-  margin-top: 20px;
+  margin-top: 1.25rem;
 }
 
 .form-title {
   font-size: 1.5rem;
-  margin-bottom: 10px;
+  margin-bottom: 0.625rem;
+  color: #000;
 }
 
 .input-field {
-  padding: 10px;
-  width: 300px;
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  padding: 0.625rem;
+  width: 18.75rem; /* 300px → 18.75rem */
+  margin-bottom: 0.625rem;
+  border: 0.0625rem solid #a3d1c6;
+  border-radius: 0.3125rem;
+  background-color: #fbffe4;
+  color: #000;
 }
 
 .add-button,
 .update-button,
 .delete-button {
-  padding: 10px;
-  border: 1px solid #ccc;
+  padding: 0.625rem;
+  border: 0.0625rem solid #3d8d7a;
   color: white;
-  border-radius: 5px;
+  border-radius: 0.3125rem;
   cursor: pointer;
   width: 100%;
 }
+
 .add-button {
-  background-color: #45a049;
+  background-color: #3d8d7a;
 }
 
 .update-button {
-  background-color: #ffc107;
+  background-color: #a3d1c6;
 }
 
 .delete-button {
-  background-color: #dc3545;
+  background-color: #b3d8a8;
 }
 
-.add-button:hover {
-  background-color: #45a049;
+.update-button {
+  background-color: #ffc107b4;
+}
+
+.update-button:hover {
+  background-color: #ffc107;
+}
+
+.delete-button:hover {
+  background-color: #92c9b5;
 }
 
 /* No customer found */
 .no-customer {
-  color: red;
+  color: #dc3545;
   font-size: 1.2rem;
 }

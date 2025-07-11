@@ -1,0 +1,34 @@
+.header-container {
+  width: 100vw; /* Viewport genişliği kadar olsun */
+  max-width: 100%; /* Taşmayı engelle */
+  margin: 0px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px; /* İçeriği sıkıştırmamak için */
+  background: linear-gradient(135deg, #3d8d7a, #b3d8a8);
+  color: white;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 0; /* Gereksiz border-radius'u kaldır */
+}
+
+.links {
+  display: flex;
+  gap: 2rem; /* Boşluğu küçült */
+}
+
+.links a {
+  text-decoration: none;
+  color: #fbffe4;
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.links a:hover {
+  color: #eaeaea;
+}
+
+.links a:active {
+  color: #adc8a4;
+}

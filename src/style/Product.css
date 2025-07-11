@@ -6,11 +6,13 @@ body {
 
 h2,
 h3 {
-  color: #343a40;
+  color: #000;
   font-weight: bold;
 }
 
-/* Custom spacing for sections */
+h2.text-center {
+  color: #000;
+}
 .product-manager,
 .product-search,
 .add-product,
@@ -18,7 +20,7 @@ h3 {
 .delete-product {
   padding: 20px;
   border-radius: 8px;
-  background-color: #ffffff;
+  background-color: #b3d8a8;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
