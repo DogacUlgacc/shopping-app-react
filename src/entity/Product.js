@@ -30,7 +30,7 @@ const Product = () => {
   const [isDeleted, setIsDeleted] = useState(false);
   const [isDeleteAttempted, setIsDeleteAttempted] = useState(false);
 
-  const token = localStorage.getItem("token"); // veya "accessToken"
+  const token = localStorage.getItem("token");
 
   // 1. Get All Products
   const fetchAllProducts = async () => {
@@ -47,9 +47,12 @@ const Product = () => {
 
   // 2. Get Product by ID
   const fetchProductById = async (productId) => {
-    setIsSearched(true); // Arama yapıldı
+    setIsSearched(true);
+    if (!productId) {
+      alert("Lütfen ürün id giriniz!");
+    }
     try {
-      const response = await axios.get(`${BASE_URL}/${productId}`); // Fixed interpolation
+      const response = await axios.get(`${BASE_URL}/${productId}`);
       setProduct(response.data);
     } catch (error) {
       console.error("Hata:", error);
@@ -60,7 +63,7 @@ const Product = () => {
   // 3. Add a New Product (POST)
   const addProduct = async () => {
     if (!productInfo.name || !productInfo.price || !productInfo.quantity) {
-      alert("Please fill the blanks!");
+      alert("Gerekli alanları doldurun!");
       setIsUpdating(false);
       return;
     }
@@ -71,24 +74,31 @@ const Product = () => {
     }
 
     try {
-      const response = await axios.post(`${BASE_URL}/add`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(productInfo),
-      });
+      console.log("Gönderilen ürün bilgisi:", productInfo);
 
-      if (response.ok) {
-        console.log("Product added.");
-        fetchAllProducts();
-        setProductInfo({ name: "", price: "", quantity: "" });
-      }
+      const response = await axios.post(
+        `${BASE_URL}/add`,
+        {
+          name: productInfo.name,
+          price: Number(productInfo.price),
+          quantity: Number(productInfo.quantity),
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log("Backend'den dönen cevap:", response.data);
+
+      fetchAllProducts();
+      setProductInfo({ name: "", price: "", quantity: "" });
     } catch (error) {
       if (error.response && error.response.status === 403) {
         alert(
-          "Bu işlemi yapma yetkiniz yok. Sadece admin kullanıcılar ürün silebilir."
+          "Bu işlemi yapma yetkiniz yok. Sadece admin kullanıcılar ürün ekleyebilir."
         );
       } else {
         console.error("Beklenmeyen bir hata oluştu!", error);
@@ -139,7 +149,7 @@ const Product = () => {
       setIsProductFound(false);
       if (error.response && error.response.status === 403) {
         alert(
-          "Bu işlemi yapma yetkiniz yok. Sadece admin kullanıcılar ürün silebilir."
+          "Bu işlemi yapma yetkiniz yok. Sadece admin kullanıcılar ürün güncelleyebilir."
         );
       } else {
         console.error("Beklenmeyen bir hata oluştu!", error);
@@ -161,9 +171,12 @@ const Product = () => {
       setLoading(false);
       return;
     }
+    if (!productId) {
+      alert("Lütfen Id giriniz!");
+      return;
+    }
 
     try {
-      // Ürün var mı kontrolü
       const response = await axios.get(`http://localhost:8080/product/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -171,7 +184,7 @@ const Product = () => {
       });
 
       if (!response.data) {
-        console.log("Product not found!");
+        alert("Ürün bulunamadı!");
         setIsDeleted(false);
         setLoading(false);
         return;
@@ -186,8 +199,6 @@ const Product = () => {
 
       console.log("Product deleted!");
       setIsDeleted(true);
-
-      // Ürün listesini yeniden yükle
       fetchAllProducts();
     } catch (error) {
       setIsDeleted(false);
@@ -237,6 +248,7 @@ const Product = () => {
             <input
               type="number"
               className="form-control mb-3"
+              style={{ width: "100%" }}
               value={enteredProductId}
               onChange={(e) => setEnteredProductId(e.target.value)}
               placeholder="Ürün ID girin"

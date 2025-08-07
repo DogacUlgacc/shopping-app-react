@@ -49,7 +49,7 @@
 
 .search-input {
   padding: 0.625rem;
-  width: 15.625rem; /* 250px → 15.625rem */
+  width: 100%;
   margin-right: 0.625rem;
   border: 0.0625rem solid #a3d1c6;
   border-radius: 0.3125rem;

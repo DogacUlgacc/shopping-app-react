@@ -25,6 +25,7 @@ const Customer = () => {
   const [isUpdating, setIsUpdating] = useState(false);
   const [isCustomerFound, setIsCustomerFound] = useState(true);
   const [isUpdated, setIsUpdated] = useState(false);
+  const token = localStorage.getItem("token"); // veya "accessToken"
 
   // 1. Get All Products
   const fetchAllCustomer = async () => {
@@ -44,12 +45,30 @@ const Customer = () => {
   // 2. Get Customer by ID
   const fetchCustomerById = async (customerId) => {
     setIsSearched(true);
+    if (!token) {
+      alert("Customer not login!");
+      console.error("Kullanıcı giriş yapmamış.");
+      setLoading(false);
+      return;
+    }
     try {
-      const response = await axios.get(`${BASE_URL}/${customerId}`);
+      const response = await axios.get(`${BASE_URL}/${customerId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setCustomer(response.data);
+      if (response.ok) {
+        console.log("Customer found");
+      }
     } catch (error) {
-      console.log(error);
-      setCustomer([]);
+      if (error.response && error.response.status === 403) {
+        alert("Bu işlemi yapma yetkiniz yok. Sadece adminler görür.");
+      } else {
+        console.error("Beklenmeyen bir hata oluştu!", error);
+      }
     }
   };
 
@@ -161,27 +180,27 @@ const Customer = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchCustomers = async () => {
-      try {
-        const response = await axios.get(`${BASE_URL}/all`); // Corrected interpolation
-        setCustomers(response.data.content);
-      } catch (err) {
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchCustomers = async () => {
+  //     try {
+  //       const response = await axios.get(`${BASE_URL}/all`); // Corrected interpolation
+  //       setCustomers(response.data.content);
+  //     } catch (err) {
+  //       setError(err);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-    fetchCustomers();
-  }, []);
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  //   fetchCustomers();
+  // }, []);
+  // if (loading) {
+  //   return <div>Loading...</div>;
+  // }
 
-  if (error) {
-    return <div>Error: {error.message}</div>;
-  }
+  // if (error) {
+  //   return <div>Error: {error.message}</div>;
+  // }
 
   return (
     <div className="container my-5">
